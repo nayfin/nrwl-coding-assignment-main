@@ -6,12 +6,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { ApiService } from './api.service';
 import { TicketsComponent } from './tickets/tickets.component';
-
+import { CrisprFormsModule } from '@tft/crispr-forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 @NgModule({
   declarations: [AppComponent, TicketsComponent],
   imports: [
     HttpClientModule,
     BrowserModule,
+    CrisprFormsModule,
+    BrowserAnimationsModule,
     RouterModule.forRoot(
       [
         { path: '', component: TicketsComponent },
@@ -21,6 +24,7 @@ import { TicketsComponent } from './tickets/tickets.component';
         initialNavigation: 'enabledBlocking',
       }
     ),
+
   ],
   providers: [ApiService],
   bootstrap: [AppComponent],

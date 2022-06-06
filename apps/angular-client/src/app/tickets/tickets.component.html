@@ -1,6 +1,7 @@
 <h2>Tickets</h2>
+<crispr-form [config]="filterConfig" (valueChanges)="updateFilter($event)"></crispr-form>
 <ul>
-    <li *ngFor="let t of tickets$ | async">
+    <li *ngFor="let t of filteredTickets$ | async">
         Ticket: {{ t.id }}, {{ t.description }}
     </li>
 </ul>

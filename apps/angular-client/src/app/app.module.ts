@@ -7,9 +7,10 @@ import { AppComponent } from './app.component';
 import { ApiService } from './api.service';
 import { TicketsComponent } from './tickets/tickets.component';
 import { CrisprFormsModule } from '@tft/crispr-forms';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
 @NgModule({
-  declarations: [AppComponent, TicketsComponent],
+  declarations: [AppComponent, TicketsComponent, TicketDetailsComponent],
   imports: [
     HttpClientModule,
     BrowserModule,
@@ -18,13 +19,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
     RouterModule.forRoot(
       [
         { path: '', component: TicketsComponent },
+        { path: 'ticket/:id', component: TicketDetailsComponent },
         { path: '**', redirectTo: '/' },
       ],
       {
         initialNavigation: 'enabledBlocking',
       }
     ),
-
   ],
   providers: [ApiService],
   bootstrap: [AppComponent],

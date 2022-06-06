@@ -3,5 +3,7 @@
 <ul>
     <li *ngFor="let t of filteredTickets$ | async">
         Ticket: {{ t.id }}, {{ t.description }}
+
+        <a [routerLink]="['ticket', t.id]" mat-raised-button> DETAILS</a>
     </li>
 </ul>

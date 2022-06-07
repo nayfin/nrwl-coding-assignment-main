@@ -92,7 +92,6 @@ export class TicketDetailsComponent implements OnInit {
   assignUser(form: FormGroup, ticketId: number) {
     if (form.valid) {
       const {assigneeId, completed} = form.getRawValue();
-      console.log({assigneeId, completed, value: form.getRawValue()})
       combineLatest([
         this.api.assign(ticketId, assigneeId),
         this.api.complete(ticketId, completed),

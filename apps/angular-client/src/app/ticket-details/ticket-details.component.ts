@@ -1,6 +1,6 @@
 import { Ticket } from '@acme/shared-models';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
 import { catchError, combineLatest, distinctUntilChanged, map, Observable, of, pipe, switchMap } from 'rxjs';
@@ -21,6 +21,7 @@ export class TicketDetailsComponent implements OnInit {
         controlType: ControlType.SELECT,
         controlName: 'assigneeId',
         label: 'Assign User',
+        validators: [Validators.required],
         // disable if completed
         disabledCallback: (group: FormGroup) => {
           const completedControl = group.get('completed') as FormControl;
@@ -94,7 +95,7 @@ export class TicketDetailsComponent implements OnInit {
       const {assigneeId, completed} = form.getRawValue();
       combineLatest([
         this.api.assign(ticketId, assigneeId),
-        this.api.complete(ticketId, completed),
+        this.api.complete(ticketId, completed || false),
       ]).pipe(
         catchError((err) => {
           console.error(err);

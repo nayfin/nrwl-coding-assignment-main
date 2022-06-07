@@ -82,7 +82,7 @@ export class TicketsComponent {
         controlType: ControlType.INPUT,
         controlName: 'description',
         validators: [Validators.required],
-        label: 'Descriptions'
+        label: 'Description'
       },
       {
         controlType: ControlType.BUTTON,

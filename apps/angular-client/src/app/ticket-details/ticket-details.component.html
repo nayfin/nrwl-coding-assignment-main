@@ -1,1 +1,10 @@
-<p>ticket-details works!</p>
+<ng-container *ngIf="ticket$ | async as ticket; else noTicket">
+  <h1> Ticket - {{ticket.id}}</h1>
+  <p>{{ticket.description}}</p>
+  <crispr-form [config]="assignUserConfig" [value]="{assigneeId: ticket.assigneeId, completed: ticket.completed}" (submitted)="assignUser($event, ticket.id)">
+
+  </crispr-form>
+</ng-container>
+<ng-template #noTicket>
+  LOADING...
+</ng-template>

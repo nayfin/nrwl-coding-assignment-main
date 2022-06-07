@@ -1,9 +1,16 @@
 <h2>Tickets</h2>
 <crispr-form [config]="filterConfig" (valueChanges)="updateFilter($event)"></crispr-form>
 <ul>
-    <li *ngFor="let t of filteredTickets$ | async">
-        Ticket: {{ t.id }}, {{ t.description }}
-
-        <a [routerLink]="['ticket', t.id]" mat-raised-button> DETAILS</a>
+    <li *ngFor="let t of filteredTickets$ | async" class="ticket-item">
+        <span>
+            Ticket: {{ t.id }}, {{ t.description }}
+            (Assigned to: {{t.assigneeName}})
+        </span>
+        <span>
+            <mat-icon *ngIf="t.completed">done</mat-icon>
+            <a [routerLink]="['ticket', t.id]" mat-button color="accent"> DETAILS</a>
+        </span>
     </li>
 </ul>
+
+<crispr-form *ngIf="!submitting" [config]="newTicketConfig" (submitted)="createNewTicket($event)"></crispr-form>

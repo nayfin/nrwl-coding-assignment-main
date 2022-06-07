@@ -1,0 +1,13 @@
+/* :host {
+  display: block;
+  padding: 1em 1em 0 1em;
+} */
+.ticket-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  span {
+    display: flex;
+    align-items: center;
+  }
+}

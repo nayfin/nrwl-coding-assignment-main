@@ -9,6 +9,7 @@ import { TicketsComponent } from './tickets/tickets.component';
 import { CrisprFormsModule } from '@tft/crispr-forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
+import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [AppComponent, TicketsComponent, TicketDetailsComponent],
   imports: [
@@ -16,6 +17,7 @@ import { TicketDetailsComponent } from './ticket-details/ticket-details.componen
     BrowserModule,
     CrisprFormsModule,
     BrowserAnimationsModule,
+    MatIconModule,
     RouterModule.forRoot(
       [
         { path: '', component: TicketsComponent },

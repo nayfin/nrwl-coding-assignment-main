@@ -1,11 +1,11 @@
 import { Ticket, User } from '@acme/shared-models';
-import { Component } from '@angular/core';
+import { TicketsFacade, StatusOptions } from '@acme/tickets/data-access';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
 import { ApiService } from '../api.service';
 
-type StatusOptions = 'complete' | 'incomplete'
 type TicketUI = Ticket & { assigneeName: string | null};
 
 @Component({
@@ -13,14 +13,14 @@ type TicketUI = Ticket & { assigneeName: string | null};
   templateUrl: './tickets.component.html',
   styleUrls: ['./tickets.component.scss'],
 })
-export class TicketsComponent {
+export class TicketsComponent implements OnInit {
   newTicketsSubject = new BehaviorSubject<Ticket[]>([]);
   // This is a funky way of doing this, normally this would be handled by updating a store
 
   users$ = this.api.users();
 
   tickets$: Observable<TicketUI[]> = combineLatest([
-    this.api.tickets(),
+    this.ticketsFacade.allTickets$,
     this.newTicketsSubject,
     this.users$
   ]).pipe(
@@ -94,8 +94,13 @@ export class TicketsComponent {
   submitting = false;
 
   constructor(
-    private api: ApiService
+    private api: ApiService,
+    private ticketsFacade: TicketsFacade,
   ) {}
+
+  ngOnInit() {
+    this.ticketsFacade.enterTicketsPage();
+  }
 
   updateFilter(event: {statusFilter: StatusOptions[]}) {
     this.filterSubject.next(event.statusFilter || [])

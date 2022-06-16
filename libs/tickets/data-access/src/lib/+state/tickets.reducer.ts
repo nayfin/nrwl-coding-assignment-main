@@ -38,12 +38,12 @@ const ticketsReducer = createReducer(
     ...state,
     error,
   })),
-  on(TicketsActions.enterPage, (state) => ({
+  on(TicketsActions.enterTicketsPage, (state) => ({
     ...state,
     selectedId: null,
   })),
   on(TicketsActions.createTicket, (state, { ticket }) => ticketsAdapter.addOne(ticket, state)),
-  on(TicketsActions.viewTicketDetails, (state, { ticketId }) => ({
+  on(TicketsActions.enterDetailsPage, (state, { ticketId }) => ({
     ...state,
     selectedId: ticketId
   }))

@@ -13,7 +13,7 @@ export class TicketsFacade {
    */
   loaded$ = this.store.pipe(select(TicketsSelectors.getTicketsLoaded));
   allTickets$ = this.store.pipe(select(TicketsSelectors.getAllTickets));
-  selectedTickets$ = this.store.pipe(select(TicketsSelectors.getSelected));
+  selectedTicket$ = this.store.pipe(select(TicketsSelectors.getSelected));
 
   constructor(private readonly store: Store) {}
 
@@ -26,6 +26,10 @@ export class TicketsFacade {
   }
 
   enterTicketsPage() {
-    this.store.dispatch(TicketsActions.enterPage())
+    this.store.dispatch(TicketsActions.enterTicketsPage())
+  }
+
+  enterDetailsPage(ticketId: number) {
+    this.store.dispatch(TicketsActions.enterDetailsPage({ticketId}))
   }
 }

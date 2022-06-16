@@ -1,9 +1,10 @@
 import { Ticket } from '@acme/shared-models';
+import { TicketsFacade } from '@acme/tickets/data-access';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
-import { catchError, combineLatest, distinctUntilChanged, map, Observable, of, pipe, switchMap } from 'rxjs';
+import { catchError, combineLatest, distinctUntilChanged, map, Observable, of, pipe, switchMap, take, tap } from 'rxjs';
 import { ApiService } from '../api.service';
 
 @Component({
@@ -13,7 +14,7 @@ import { ApiService } from '../api.service';
 })
 export class TicketDetailsComponent implements OnInit {
 
-  ticket$: Observable<Ticket> | undefined;
+  ticket$: Observable<Ticket | undefined>;
 
   assignUserConfig: FormConfig = {
     fields: [
@@ -75,19 +76,23 @@ export class TicketDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
-  ) {}
+    private router: Router,
+    private ticketsFacade: TicketsFacade,
+  ) {
+    this.ticket$ = ticketsFacade.selectedTicket$;
+  }
 
   ngOnInit(): void {
-    this.ticket$ = this.route.paramMap.pipe(
-      switchMap((params) => {
-        const stringId = params?.get('id') || '';
-        // should route back home if there is an issue with id param
-        if (!stringId) this.router.navigate(['']);
-        const ticketId = parseFloat(stringId);
-        return this.api.ticket(ticketId);
-      })
-    )
+
+    this.route.paramMap.pipe(
+      take(1)
+    ).subscribe((params) => {
+      const stringId = params?.get('id') || '';
+      // if we don't have the id parameter, route back to root route
+      if (!stringId) this.router.navigate(['']);
+      const ticketId = parseFloat(stringId);
+      this.ticketsFacade.enterDetailsPage(ticketId)
+    });
   }
 
   assignUser(form: FormGroup, ticketId: number) {

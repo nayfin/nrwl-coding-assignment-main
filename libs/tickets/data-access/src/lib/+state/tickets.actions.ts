@@ -13,7 +13,7 @@ export const loadTicketsFailure = createAction(
   props<{ error: any }>()
 );
 
-export const enterPage = createAction('[Tickets Page] Enter');
+export const enterTicketsPage = createAction('[Tickets Page] Enter');
 export const createTicket = createAction('[Tickets Page] Create Ticket', props<{ticket: TicketsEntity}>());
-export const viewTicketDetails = createAction('[Tickets Page] View Ticket Details', props<{ticketId: number}>());
+export const enterDetailsPage = createAction('[Ticket Details Page] Enter', props<{ticketId: number}>());
 export const filterTickets = createAction('[Tickets Page] Filter Tickets', props<{ticketId: number}>());

@@ -22,9 +22,31 @@
             "allow": [],
             "depConstraints": [
               {
-                "sourceTag": "*",
+                "sourceTag": "type:util",
                 "onlyDependOnLibsWithTags": [
-                  "*"
+                  "type:util"
+                ]
+              },
+              {
+                "sourceTag": "type:data-access",
+                "onlyDependOnLibsWithTags": [
+                  "type:util",
+                  "type:data-access"
+                ]
+              },
+              {
+                "sourceTag": "type:feature",
+                "onlyDependOnLibsWithTags": [
+                  "type:util",
+                  "type:type:data-access",
+                  "type:ui"
+                ]
+              },
+              {
+                "sourceTag": "type:ui",
+                "onlyDependOnLibsWithTags": [
+                  "type:util",
+                  "type:ui"
                 ]
               }
             ]

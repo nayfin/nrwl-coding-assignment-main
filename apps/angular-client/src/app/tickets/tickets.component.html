@@ -1,5 +1,5 @@
 <h2>Tickets</h2>
-<crispr-form [config]="filterConfig" (valueChanges)="setFilterParams($event)"></crispr-form>
+<crispr-form [config]="filterConfig" [value]="(filterValue$ | async) || {}" (valueChanges)="setFilterParams($event)"></crispr-form>
 <ul>
     <li *ngFor="let t of filteredTickets$ | async" class="ticket-item" e2e-ticket-item>
         <span>

@@ -14,6 +14,7 @@ export class TicketsFacade {
    */
   loaded$ = this.store.pipe(select(TicketsSelectors.getTicketsLoaded));
   allTickets$ = this.store.pipe(select(TicketsSelectors.getAllTickets));
+  ticketsFilter$ = this.store.pipe(select(TicketsSelectors.getTicketsFilter));
   filteredTickets$ = this.store.pipe(select(TicketsSelectors.getFilteredTickets));
 
   selectedTicket$ = this.store.pipe(select(TicketsSelectors.getSelected));

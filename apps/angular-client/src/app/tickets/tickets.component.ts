@@ -33,6 +33,9 @@ export class TicketsComponent implements OnInit {
   );
 
   filteredTickets$: Observable<Ticket[]> = this.ticketsFacade.filteredTickets$
+  filterValue$: Observable<{statusFilter: StatusOptions[]}> = this.ticketsFacade.ticketsFilter$.pipe(
+    map(statusOptions => ({statusFilter: statusOptions}))
+  );
   // the configuration for the filter form
   filterConfig: FormConfig = {
     fields: [
@@ -84,6 +87,7 @@ export class TicketsComponent implements OnInit {
   ) {
     route.queryParamMap.subscribe(params => {
       const filter = params.getAll('filter') as StatusOptions[];
+      console.log({filter})
       this.updateFilter(filter)
     });
   }

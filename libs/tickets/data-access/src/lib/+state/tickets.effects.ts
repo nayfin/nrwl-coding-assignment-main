@@ -11,6 +11,7 @@ import * as TicketsActions from './tickets.actions';
 import * as TicketsFeature from './tickets.reducer';
 import { Store } from '@ngrx/store';
 import * as TicketSelectors from './tickets.selectors';
+import { TicketsApiService } from '../api/tickets-api.service';
 
 @Injectable()
 export class TicketsEffects {
@@ -29,7 +30,7 @@ export class TicketsEffects {
       ofType(TicketsActions.init),
       fetch({
         run: () => {
-          return this.httpClient.get<Ticket[]>('/api/tickets').pipe(
+          return this.ticketsApi.tickets().pipe(
             map((tickets) => TicketsActions.loadTicketsSuccess({ tickets }))
           );
         },
@@ -43,7 +44,7 @@ export class TicketsEffects {
 
   constructor(
     private readonly actions$: Actions,
-    private httpClient: HttpClient,
+    private ticketsApi: TicketsApiService,
     private store: Store
   ) {}
 }

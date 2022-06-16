@@ -1,13 +1,13 @@
 {
   "projectType": "library",
-  "sourceRoot": "libs/tickets/data-access/src",
+  "sourceRoot": "libs/users/data-access/src",
   "prefix": "acme",
   "targets": {
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/libs/tickets/data-access"],
+      "outputs": ["coverage/libs/users/data-access"],
       "options": {
-        "jestConfig": "libs/tickets/data-access/jest.config.ts",
+        "jestConfig": "libs/users/data-access/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -15,8 +15,8 @@
       "executor": "@nrwl/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "libs/tickets/data-access/**/*.ts",
-          "libs/tickets/data-access/**/*.html"
+          "libs/users/data-access/**/*.ts",
+          "libs/users/data-access/**/*.html"
         ]
       }
     }

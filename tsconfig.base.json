@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@acme/shared-models": ["libs/shared-models/src/index.ts"],
-      "@acme/tickets/data-access": ["libs/tickets/data-access/src/index.ts"]
+      "@acme/tickets/data-access": ["libs/tickets/data-access/src/index.ts"],
+      "@acme/users/data-access": ["libs/users/data-access/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

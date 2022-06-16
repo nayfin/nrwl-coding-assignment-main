@@ -2,8 +2,9 @@ import { Ticket, User } from '@acme/shared-models';
 import { TicketsFacade, StatusOptions } from '@acme/tickets/data-access';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
-import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
 import { ApiService } from '../api.service';
 
 type TicketUI = Ticket & { assigneeName: string | null};
@@ -31,22 +32,7 @@ export class TicketsComponent implements OnInit {
     }))
   );
 
-  filterSubject = new BehaviorSubject<StatusOptions[]>([]);
-
-  filteredTickets$: Observable<TicketUI[]> = combineLatest([
-    this.tickets$,
-    this.filterSubject,
-  ]).pipe(
-    map(([unfilteredTickets, filter]) => {
-      // return all tickets if not filtering
-      if (filter?.length === 0) return unfilteredTickets;
-      // else filter them by status
-      return unfilteredTickets.filter((ticket) => {
-        return (filter.includes('complete') && ticket.completed)
-        || (filter.includes('incomplete') && !ticket.completed)
-      })
-    })
-  )
+  filteredTickets$: Observable<Ticket[]> = this.ticketsFacade.filteredTickets$
   // the configuration for the filter form
   filterConfig: FormConfig = {
     fields: [
@@ -93,14 +79,25 @@ export class TicketsComponent implements OnInit {
   constructor(
     private api: ApiService,
     private ticketsFacade: TicketsFacade,
-  ) {}
+    private router: Router,
+    route: ActivatedRoute
+  ) {
+    route.queryParamMap.subscribe(params => {
+      const filter = params.getAll('filter') as StatusOptions[];
+      this.updateFilter(filter)
+    });
+  }
 
   ngOnInit() {
     this.ticketsFacade.enterTicketsPage();
   }
 
-  updateFilter(event: {statusFilter: StatusOptions[]}) {
-    this.filterSubject.next(event.statusFilter || [])
+  setFilterParams(event: {statusFilter: StatusOptions[]}) {
+    this.router.navigate([''], {queryParams: {filter: event.statusFilter}} )
+  }
+
+  updateFilter(statusFilter: StatusOptions[]) {
+    this.ticketsFacade.filterTickets(statusFilter)
   }
 
   createNewTicket(ticketForm: FormGroup) {

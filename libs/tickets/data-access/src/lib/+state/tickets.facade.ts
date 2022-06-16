@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 
 import * as TicketsActions from './tickets.actions';
-import { NewTicketForm, TicketsEntity } from './tickets.models';
+import { NewTicketForm, StatusOptions, TicketsEntity } from './tickets.models';
 import * as TicketsFeature from './tickets.reducer';
 import * as TicketsSelectors from './tickets.selectors';
 
@@ -14,6 +14,8 @@ export class TicketsFacade {
    */
   loaded$ = this.store.pipe(select(TicketsSelectors.getTicketsLoaded));
   allTickets$ = this.store.pipe(select(TicketsSelectors.getAllTickets));
+  filteredTickets$ = this.store.pipe(select(TicketsSelectors.getFilteredTickets));
+
   selectedTicket$ = this.store.pipe(select(TicketsSelectors.getSelected));
   creatingTicket$ = this.store.pipe(select(TicketsSelectors.getCreatingTicket));
 
@@ -45,6 +47,10 @@ export class TicketsFacade {
 
   createTicket(ticket: NewTicketForm) {
     this.store.dispatch(TicketsActions.createTicket({ticket}));
+  }
+
+  filterTickets(filter: StatusOptions[]) {
+    this.store.dispatch(TicketsActions.filterTickets({filter}));
   }
 
 }

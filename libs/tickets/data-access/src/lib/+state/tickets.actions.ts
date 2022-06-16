@@ -1,6 +1,6 @@
 import { Ticket } from '@acme/shared-models';
 import { createAction, props } from '@ngrx/store';
-import { NewTicketForm, TicketsEntity } from './tickets.models';
+import { NewTicketForm, StatusOptions, TicketsEntity } from './tickets.models';
 
 export const init = createAction('[Tickets/API] Init');
 
@@ -46,7 +46,7 @@ export const completeTicketFailure = createAction(
 
 export const enterTicketsPage = createAction('[Tickets Page] Enter');
 export const createTicket = createAction('[Tickets Page] Create Ticket', props<{ticket: NewTicketForm}>());
-export const filterTickets = createAction('[Tickets Page] Filter Tickets', props<{ticketId: number}>());
+export const filterTickets = createAction('[Tickets Page] Filter Tickets', props<{filter: StatusOptions[]}>());
 export const enterDetailsPage = createAction('[Ticket Details Page] Enter', props<{ticketId: number}>());
 export const assignTicket = createAction('[Ticket Details Page] Assign Ticket', props<{ticketId: number, assigneeId: number}>());
 export const completeTicket = createAction('[Ticket Details Page] Complete Ticket', props<{ticketId: number, completed: boolean}>());

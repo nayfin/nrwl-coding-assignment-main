@@ -15,4 +15,7 @@
     </li>
 </ul>
 
-<crispr-form *ngIf="!submitting" [config]="newTicketConfig" (submitted)="createNewTicket($event)"></crispr-form>
+<crispr-form *ngIf="(creatingTicket$ | async) !== true; else updating" [config]="newTicketConfig" (submitted)="createNewTicket($event)"></crispr-form>
+<ng-template #updating>
+    <span>Updating</span>
+</ng-template>

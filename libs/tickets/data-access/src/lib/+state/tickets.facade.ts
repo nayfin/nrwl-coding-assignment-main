@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { select, Store, Action } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 
 import * as TicketsActions from './tickets.actions';
+import { NewTicketForm, TicketsEntity } from './tickets.models';
 import * as TicketsFeature from './tickets.reducer';
 import * as TicketsSelectors from './tickets.selectors';
 
@@ -14,6 +15,7 @@ export class TicketsFacade {
   loaded$ = this.store.pipe(select(TicketsSelectors.getTicketsLoaded));
   allTickets$ = this.store.pipe(select(TicketsSelectors.getAllTickets));
   selectedTicket$ = this.store.pipe(select(TicketsSelectors.getSelected));
+  creatingTicket$ = this.store.pipe(select(TicketsSelectors.getCreatingTicket));
 
   constructor(private readonly store: Store) {}
 
@@ -32,4 +34,17 @@ export class TicketsFacade {
   enterDetailsPage(ticketId: number) {
     this.store.dispatch(TicketsActions.enterDetailsPage({ticketId}))
   }
+
+  assignTicket(ticketId: number, assigneeId: number) {
+    this.store.dispatch(TicketsActions.assignTicket({ticketId, assigneeId}))
+  }
+
+  completeTicket(ticketId: number, completed: boolean) {
+    this.store.dispatch(TicketsActions.completeTicket({ticketId, completed}))
+  }
+
+  createTicket(ticket: NewTicketForm) {
+    this.store.dispatch(TicketsActions.createTicket({ticket}));
+  }
+
 }

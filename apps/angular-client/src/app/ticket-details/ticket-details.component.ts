@@ -4,7 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
-import { catchError, combineLatest, distinctUntilChanged, map, Observable, of, pipe, switchMap, take, tap } from 'rxjs';
+import { distinctUntilChanged, map, Observable, take } from 'rxjs';
 import { ApiService } from '../api.service';
 
 @Component({
@@ -98,17 +98,9 @@ export class TicketDetailsComponent implements OnInit {
   assignUser(form: FormGroup, ticketId: number) {
     if (form.valid) {
       const {assigneeId, completed} = form.getRawValue();
-      combineLatest([
-        this.api.assign(ticketId, assigneeId),
-        this.api.complete(ticketId, completed || false),
-      ]).pipe(
-        catchError((err) => {
-          console.error(err);
-          return of(err)
-        })
-      ).subscribe(() => {
-        this.router.navigate([''])
-      })
+      this.ticketsFacade.assignTicket(ticketId, assigneeId);
+      this.ticketsFacade.completeTicket(ticketId, completed);
+      this.router.navigate([''])
     }
   }
 }

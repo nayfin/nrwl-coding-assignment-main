@@ -1,8 +1,4 @@
-import { Ticket } from '@acme/shared-models';
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http'
-// import { Injectable } from '@angular/';
-
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { fetch } from '@nrwl/angular';
 import { filter, map, withLatestFrom } from 'rxjs/operators';
@@ -41,6 +37,58 @@ export class TicketsEffects {
       })
     )
   );
+
+  createTicket$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TicketsActions.createTicket),
+      fetch({
+        run: ({ticket}) => {
+          return this.ticketsApi.newTicket(ticket).pipe(
+            map((response) => TicketsActions.createTicketSuccess({ ticket: response }))
+          );
+        },
+        onError: (_action, error) => {
+          console.error('Error', error);
+          return TicketsActions.createTicketFailure({ error });
+        },
+      })
+    )
+  );
+
+  assignTicket$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TicketsActions.assignTicket),
+      fetch({
+        run: ({ticketId, assigneeId}) => {
+          return this.ticketsApi.assign(ticketId, assigneeId).pipe(
+            map(() => TicketsActions.assignTicketSuccess({ ticketId, assigneeId }))
+          );
+        },
+        onError: (_action, error) => {
+          console.error('Error', error);
+          return TicketsActions.assignTicketFailure({ error });
+        },
+      })
+    )
+  );
+
+  completeTicket$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TicketsActions.completeTicket),
+      fetch({
+        run: ({ticketId, completed}) => {
+          return this.ticketsApi.complete(ticketId, completed).pipe(
+            map(() => TicketsActions.completeTicketSuccess({ ticketId, completed }))
+          );
+        },
+        onError: (_action, error) => {
+          console.error('Error', error);
+          return TicketsActions.completeTicketFailure({ error });
+        },
+      })
+    )
+  );
+
 
   constructor(
     private readonly actions$: Actions,

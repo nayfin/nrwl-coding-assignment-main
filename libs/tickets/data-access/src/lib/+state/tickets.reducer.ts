@@ -9,6 +9,7 @@ export const TICKETS_FEATURE_KEY = 'tickets';
 export interface State extends EntityState<TicketsEntity> {
   loaded: boolean; // has the Tickets list been loaded
   selectedId?: number | null; // which Tickets record has been selected
+  creatingTicket: boolean;
   error?: string | null; // last known error (if any)
 }
 
@@ -22,6 +23,7 @@ export const ticketsAdapter: EntityAdapter<TicketsEntity> =
 export const initialState: State = ticketsAdapter.getInitialState({
   // set initial required properties
   loaded: false,
+  creatingTicket: false
 });
 ticketsAdapter.setOne
 const ticketsReducer = createReducer(
@@ -34,7 +36,17 @@ const ticketsReducer = createReducer(
   on(TicketsActions.loadTicketsSuccess, (state, { tickets }) =>
     ticketsAdapter.setAll(tickets, { ...state, loaded: true })
   ),
-  on(TicketsActions.loadTicketsFailure, (state, { error }) => ({
+  on(TicketsActions.assignTicketSuccess, (state, {ticketId, assigneeId}) =>
+    ticketsAdapter.updateOne( {id: ticketId, changes: {assigneeId} }, state)
+  ),
+  on(TicketsActions.completeTicketSuccess, (state, {ticketId, completed}) =>
+    ticketsAdapter.updateOne( {id: ticketId, changes: {completed} }, state)
+  ),
+  on(
+    TicketsActions.loadTicketsFailure,
+    TicketsActions.assignTicketFailure,
+    TicketsActions.completeTicketFailure,
+    (state, { error }) => ({
     ...state,
     error,
   })),
@@ -42,7 +54,9 @@ const ticketsReducer = createReducer(
     ...state,
     selectedId: null,
   })),
-  on(TicketsActions.createTicket, (state, { ticket }) => ticketsAdapter.addOne(ticket, state)),
+  on(TicketsActions.createTicket, (state) => ({...state, creatingTicket: true})),
+  on(TicketsActions.createTicketSuccess, (state, { ticket }) => ticketsAdapter.addOne(ticket, {...state, creatingTicket: false})),
+  on(TicketsActions.createTicketFailure, (state, {error}) => ({...state, error, creatingTicket: false})),
   on(TicketsActions.enterDetailsPage, (state, { ticketId }) => ({
     ...state,
     selectedId: ticketId

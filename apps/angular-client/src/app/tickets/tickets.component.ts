@@ -14,18 +14,15 @@ type TicketUI = Ticket & { assigneeName: string | null};
   styleUrls: ['./tickets.component.scss'],
 })
 export class TicketsComponent implements OnInit {
-  newTicketsSubject = new BehaviorSubject<Ticket[]>([]);
-  // This is a funky way of doing this, normally this would be handled by updating a store
 
   users$ = this.api.users();
 
   tickets$: Observable<TicketUI[]> = combineLatest([
     this.ticketsFacade.allTickets$,
-    this.newTicketsSubject,
     this.users$
   ]).pipe(
     // map assignee name to ticket to make it easier to grab from the template
-    map(([apiTickets, newTickets, users ]) => [...apiTickets, ...newTickets].map(ticket => {
+    map(([apiTickets, users ]) => apiTickets.map(ticket => {
       const assigneeName = ticket.assigneeId ? this.getNameForUserId(ticket.assigneeId, users) : null
       return {
         ...ticket,
@@ -91,7 +88,7 @@ export class TicketsComponent implements OnInit {
     ]
   };
   // Used to hide the new ticket form when submitting
-  submitting = false;
+  creatingTicket$: Observable<boolean> = this.ticketsFacade.creatingTicket$;
 
   constructor(
     private api: ApiService,
@@ -109,11 +106,7 @@ export class TicketsComponent implements OnInit {
   createNewTicket(ticketForm: FormGroup) {
     if(ticketForm.valid) {
       const ticketValue: {description: string} = ticketForm.value;
-      this.submitting = true;
-      this.api.newTicket(ticketValue).subscribe((res) => {
-        this.newTicketsSubject.next([...this.newTicketsSubject.value, res])
-        this.submitting = false;
-      });
+      this.ticketsFacade.createTicket(ticketValue);
     }
   }
 

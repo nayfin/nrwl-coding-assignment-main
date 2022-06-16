@@ -36,3 +36,8 @@ export const getSelected = createSelector(
   getSelectedId,
   (entities, selectedId) => (selectedId ? entities[selectedId] : undefined)
 );
+
+export const getCreatingTicket = createSelector(
+  getTicketsState,
+  (state) => state.creatingTicket
+);

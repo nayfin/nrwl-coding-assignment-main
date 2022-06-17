@@ -20,7 +20,9 @@ export class TicketsFacade {
   selectedTicket$ = this.store.pipe(select(TicketsSelectors.getSelected));
   creatingTicket$ = this.store.pipe(select(TicketsSelectors.getCreatingTicket));
 
-  constructor(private readonly store: Store) {}
+  constructor(private readonly store: Store) {
+    this.init();
+  }
 
   /**
    * Use the initialization action to perform one

@@ -11,15 +11,15 @@ import { TicketsApiService } from '../api/tickets-api.service';
 
 @Injectable()
 export class TicketsEffects {
-  enterTicketPages$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(TicketsActions.enterTicketsPage, TicketsActions.enterDetailsPage),
-      withLatestFrom(this.store.select(TicketSelectors.getTicketsLoaded)),
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      filter(([_payload, isLoaded]) => !isLoaded),
-      map(() => TicketsActions.init())
-    )
-  );
+  // enterTicketPages$ = createEffect(() =>
+  //   this.actions$.pipe(
+  //     ofType(TicketsActions.enterTicketsPage, TicketsActions.enterDetailsPage),
+  //     withLatestFrom(this.store.select(TicketSelectors.getTicketsLoaded)),
+  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //     filter(([_payload, isLoaded]) => !isLoaded),
+  //     map(() => TicketsActions.init())
+  //   )
+  // );
 
   init$ = createEffect(() =>
     this.actions$.pipe(

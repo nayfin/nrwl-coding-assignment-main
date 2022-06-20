@@ -1,5 +1,6 @@
 import { Ticket } from '@acme/shared-models';
 import { TicketsFacade } from '@acme/tickets/data-access';
+import { UsersFacade } from '@acme/users/data-access';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -31,21 +32,7 @@ export class TicketDetailsComponent implements OnInit {
             map(completed => completed)
           )
         },
-        options: this.api.users().pipe(
-          map((users) => {
-            const userOptions = users.map(user => {
-              return {label: user.name,
-              value: user.id}
-            })
-            return [
-              {
-                label: 'Unassigned',
-                value: null
-              },
-              ...userOptions
-            ]
-          })
-        )
+        options: this.usersFacade.usersSelectOptions
       },
       {
         controlType: ControlType.CHECKBOX,
@@ -78,6 +65,8 @@ export class TicketDetailsComponent implements OnInit {
     private api: ApiService,
     private router: Router,
     private ticketsFacade: TicketsFacade,
+    private usersFacade: UsersFacade,
+
   ) {
     this.ticket$ = ticketsFacade.selectedTicket$;
   }

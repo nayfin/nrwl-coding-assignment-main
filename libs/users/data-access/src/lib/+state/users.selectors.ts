@@ -16,21 +16,17 @@ export const getUsersError = createSelector(
   (state: State) => state.error
 );
 
-export const getAllUsers = createSelector(getUsersState, (state: State) =>
-  selectAll(state)
+export const getAllUsers = createSelector(
+  getUsersState,
+  (state: State) => selectAll(state)
+);
+
+export const getUserById = (id: number) => createSelector(
+  getUsersState,
+  (state: State) => state.entities[id]
 );
 
 export const getUsersEntities = createSelector(getUsersState, (state: State) =>
   selectEntities(state)
 );
 
-export const getSelectedId = createSelector(
-  getUsersState,
-  (state: State) => state.selectedId
-);
-
-export const getSelected = createSelector(
-  getUsersEntities,
-  getSelectedId,
-  (entities, selectedId) => (selectedId ? entities[selectedId] : undefined)
-);

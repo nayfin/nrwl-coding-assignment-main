@@ -13,3 +13,5 @@ export type NewTicketForm = Pick<TicketsEntity, 'description'>;
  * should be created to represent properties
  */
 export type StatusOptions = 'complete' | 'incomplete'
+
+export type TicketUI = TicketsEntity & { assigneeName: string | null};

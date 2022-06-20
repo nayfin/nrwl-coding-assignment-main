@@ -1,10 +1,40 @@
 import { Injectable } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { createSelector, select, Store } from '@ngrx/store';
 
 import * as TicketsActions from './tickets.actions';
-import { NewTicketForm, StatusOptions, TicketsEntity } from './tickets.models';
+import { NewTicketForm, StatusOptions, TicketUI } from './tickets.models';
 import * as TicketsFeature from './tickets.reducer';
 import * as TicketsSelectors from './tickets.selectors';
+
+// import * as UsersSelectors from '@acme/users/data-access';
+import { getUsersEntities, UsersFacade } from '@acme/users/data-access';
+import { Observable } from 'rxjs';
+
+
+export const getTicketsUI = createSelector(
+  TicketsSelectors.getAllTickets,
+  getUsersEntities,
+  (tickets, users) => {
+    return tickets.map(ticket => {
+      const assigneeName = ticket.assigneeId && users[ticket.assigneeId]?.name || null
+      return {
+      ...ticket,
+      assigneeName
+      }
+    })
+  }
+);
+
+export const getFilteredTickets = createSelector(getTicketsUI, TicketsSelectors.getTicketsFilter, (tickets, filter) => {
+  if (!filter?.length) return tickets;
+  // else filter them by status
+  return tickets.filter((ticket) => {
+    return (filter.includes('complete') && ticket.completed)
+    || (filter.includes('incomplete') && !ticket.completed)
+  })
+});
+
+
 
 @Injectable()
 export class TicketsFacade {
@@ -15,13 +45,17 @@ export class TicketsFacade {
   loaded$ = this.store.pipe(select(TicketsSelectors.getTicketsLoaded));
   allTickets$ = this.store.pipe(select(TicketsSelectors.getAllTickets));
   ticketsFilter$ = this.store.pipe(select(TicketsSelectors.getTicketsFilter));
-  filteredTickets$ = this.store.pipe(select(TicketsSelectors.getFilteredTickets));
+  filteredTickets$: Observable<TicketUI[]> = this.store.pipe(select(getFilteredTickets));
 
   selectedTicket$ = this.store.pipe(select(TicketsSelectors.getSelected));
   creatingTicket$ = this.store.pipe(select(TicketsSelectors.getCreatingTicket));
 
-  constructor(private readonly store: Store) {
+  constructor(
+    private readonly store: Store,
+    usersFacade: UsersFacade
+  ) {
     this.init();
+    usersFacade.init();
   }
 
   /**

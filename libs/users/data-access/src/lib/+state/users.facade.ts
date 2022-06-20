@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { select, Store, Action } from '@ngrx/store';
+import { map } from 'rxjs';
 
 import * as UsersActions from './users.actions';
 import * as UsersFeature from './users.reducer';
@@ -13,10 +14,25 @@ export class UsersFacade {
    */
   loaded$ = this.store.pipe(select(UsersSelectors.getUsersLoaded));
   allUsers$ = this.store.pipe(select(UsersSelectors.getAllUsers));
-  selectedUsers$ = this.store.pipe(select(UsersSelectors.getSelected));
+  usersSelectOptions = this.allUsers$.pipe(
+    map(users => {
+      const userOptions = users.map(user => {
+        return {
+          label: user.name,
+          value: user.id
+        }
+      })
+      return [
+        {
+          label: 'Unassigned',
+          value: null
+        },
+        ...userOptions
+      ]
+    })
+  )
 
-  constructor(private readonly store: Store) {}
-
+  constructor(private readonly store: Store) { }
   /**
    * Use the initialization action to perform one
    * or more tasks in your Effects.

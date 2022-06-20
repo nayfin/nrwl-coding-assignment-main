@@ -24,6 +24,10 @@ export class TicketsEffects {
   init$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TicketsActions.init),
+      withLatestFrom(this.store.select(TicketSelectors.getTicketsLoaded)),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      filter(([_payload, isLoaded]) => !isLoaded),
+      map(([payload]) => payload),
       fetch({
         run: () => {
           return this.ticketsApi.tickets().pipe(

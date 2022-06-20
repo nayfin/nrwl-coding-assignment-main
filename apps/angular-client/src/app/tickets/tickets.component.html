@@ -4,9 +4,9 @@
     <li *ngFor="let t of filteredTickets$ | async" class="ticket-item" e2e-ticket-item>
         <span>
             Ticket: {{ t.id }}, {{ t.description }}
-            <!-- <span *ngIf="t.assigneeName">
+            <span *ngIf="t.assigneeName">
                 (Assigned to: {{t.assigneeName}})
-            </span> -->
+            </span>
         </span>
         <span>
             <mat-icon *ngIf="t.completed">done</mat-icon>

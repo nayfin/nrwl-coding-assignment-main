@@ -14,6 +14,7 @@ import { TicketsDataAccessModule } from '@acme/tickets/data-access';
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { UsersDataAccessModule } from '@acme/users/data-access';
 
 @NgModule({
   declarations: [AppComponent, TicketsComponent, TicketDetailsComponent],
@@ -34,6 +35,7 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
       }
     ),
     TicketsDataAccessModule,
+    UsersDataAccessModule,
     StoreModule.forRoot({}),
     EffectsModule.forRoot([]),
     StoreDevtoolsModule.instrument({maxAge: 15})

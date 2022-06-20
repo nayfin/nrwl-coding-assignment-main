@@ -1,13 +1,11 @@
-import { Ticket, User } from '@acme/shared-models';
 import { TicketsFacade, StatusOptions } from '@acme/tickets/data-access';
+import { UsersFacade } from '@acme/users/data-access';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
-import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
-import { ApiService } from '../api.service';
+import { map, Observable } from 'rxjs';
 
-type TicketUI = Ticket & { assigneeName: string | null};
 
 @Component({
   selector: 'acme-tickets',
@@ -16,23 +14,7 @@ type TicketUI = Ticket & { assigneeName: string | null};
 })
 export class TicketsComponent implements OnInit {
 
-  users$ = this.api.users();
-
-  tickets$: Observable<TicketUI[]> = combineLatest([
-    this.ticketsFacade.allTickets$,
-    this.users$
-  ]).pipe(
-    // map assignee name to ticket to make it easier to grab from the template
-    map(([apiTickets, users ]) => apiTickets.map(ticket => {
-      const assigneeName = ticket.assigneeId ? this.getNameForUserId(ticket.assigneeId, users) : null
-      return {
-        ...ticket,
-        assigneeName
-      }
-    }))
-  );
-
-  filteredTickets$: Observable<Ticket[]> = this.ticketsFacade.filteredTickets$
+  filteredTickets$ = this.ticketsFacade.filteredTickets$
   filterValue$: Observable<{statusFilter: StatusOptions[]}> = this.ticketsFacade.ticketsFilter$.pipe(
     map(statusOptions => ({statusFilter: statusOptions}))
   );
@@ -80,14 +62,12 @@ export class TicketsComponent implements OnInit {
   creatingTicket$: Observable<boolean> = this.ticketsFacade.creatingTicket$;
 
   constructor(
-    private api: ApiService,
     private ticketsFacade: TicketsFacade,
     private router: Router,
     route: ActivatedRoute
   ) {
     route.queryParamMap.subscribe(params => {
       const filter = params.getAll('filter') as StatusOptions[];
-      console.log({filter})
       this.updateFilter(filter)
     });
   }
@@ -109,9 +89,5 @@ export class TicketsComponent implements OnInit {
       const ticketValue: {description: string} = ticketForm.value;
       this.ticketsFacade.createTicket(ticketValue);
     }
-  }
-
-  getNameForUserId(userId: number, users: User[]) {
-    return users.find(user => user.id === userId)?.name || null
   }
 }

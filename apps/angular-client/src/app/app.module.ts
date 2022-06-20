@@ -10,6 +10,12 @@ import { CrisprFormsModule } from '@tft/crispr-forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TicketDetailsComponent } from './ticket-details/ticket-details.component';
 import { MatIconModule } from '@angular/material/icon';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import * as fromTickets from './+state/tickets.reducer';
+import { TicketsEffects } from './+state/tickets.effects';
+import * as fromUsers from './+state/users.reducer';
+import { UsersEffects } from './+state/users.effects';
 @NgModule({
   declarations: [AppComponent, TicketsComponent, TicketDetailsComponent],
   imports: [
@@ -28,6 +34,13 @@ import { MatIconModule } from '@angular/material/icon';
         initialNavigation: 'enabledBlocking',
       }
     ),
+    StoreModule.forFeature(
+      fromTickets.TICKETS_FEATURE_KEY,
+      fromTickets.reducer
+    ),
+    EffectsModule.forFeature([TicketsEffects]),
+    StoreModule.forFeature(fromUsers.USERS_FEATURE_KEY, fromUsers.reducer),
+    EffectsModule.forFeature([UsersEffects]),
   ],
   providers: [ApiService],
   bootstrap: [AppComponent],

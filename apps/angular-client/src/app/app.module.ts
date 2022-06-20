@@ -16,6 +16,8 @@ import * as fromTickets from './+state/tickets.reducer';
 import { TicketsEffects } from './+state/tickets.effects';
 import * as fromUsers from './+state/users.reducer';
 import { UsersEffects } from './+state/users.effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
 @NgModule({
   declarations: [AppComponent, TicketsComponent, TicketDetailsComponent],
   imports: [
@@ -41,6 +43,11 @@ import { UsersEffects } from './+state/users.effects';
     EffectsModule.forFeature([TicketsEffects]),
     StoreModule.forFeature(fromUsers.USERS_FEATURE_KEY, fromUsers.reducer),
     EffectsModule.forFeature([UsersEffects]),
+    StoreModule.forRoot({}),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25, // Retains last 25 states
+    }),
   ],
   providers: [ApiService],
   bootstrap: [AppComponent],

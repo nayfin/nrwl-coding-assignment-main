@@ -12,6 +12,11 @@ export const getTicketsLoaded = createSelector(
   (state: State) => state.loaded
 );
 
+export const getCreatingTicket = createSelector(
+  getTicketsState,
+  (state: State) => state.creatingTicket
+);
+
 export const getTicketsError = createSelector(
   getTicketsState,
   (state: State) => state.error
@@ -24,6 +29,25 @@ export const getAllTickets = createSelector(getTicketsState, (state: State) =>
 export const getTicketsEntities = createSelector(
   getTicketsState,
   (state: State) => selectEntities(state)
+);
+
+export const getTicketsFilter = createSelector(
+  getTicketsState,
+  (state: State) => state.filter
+);
+
+export const getFilteredTickets = createSelector(
+  getAllTickets,
+  getTicketsFilter,
+  (unfilteredTickets, filter) => {
+    // return all tickets if not filtering
+    if (!filter.status?.length) return unfilteredTickets;
+    // else filter them by status
+    return unfilteredTickets.filter((ticket) => {
+      return (filter.status.includes('complete') && ticket.completed)
+      || (filter.status.includes('incomplete') && !ticket.completed)
+    })
+  }
 );
 
 export const getSelectedId = createSelector(

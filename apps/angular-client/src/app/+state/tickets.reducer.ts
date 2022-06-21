@@ -1,4 +1,3 @@
-import { state } from '@angular/animations';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on, Action } from '@ngrx/store';
 
@@ -47,12 +46,9 @@ const ticketsReducer = createReducer(
   on(TicketsActions.submitTicket, (state) => ({...state, creatingTicket: true})),
   on(TicketsActions.updateTicketsFilter, (state, {status}) => ({...state, filter: {status}})),
   on(TicketsActions.createTicketSuccess, (state, { ticket }) => ticketsAdapter.addOne(ticket, {...state, creatingTicket: false})),
-  on(TicketsActions.assignTicketSuccess, (state, { ticketId, userId}) => ticketsAdapter.updateOne({id: ticketId, changes: {assigneeId: userId}}, state)),
-  on(TicketsActions.completeTicketSuccess, (state, { ticketId, completed}) => ticketsAdapter.updateOne({id: ticketId, changes: {completed}}, state)),
+  on(TicketsActions.updateTicketSuccess, (state, { ticketId, ...changes}) => ticketsAdapter.updateOne({id: ticketId, changes }, state)),
   on(
     TicketsActions.loadTicketsFailure,
-    TicketsActions.assignTicketFailure,
-    TicketsActions.completeTicketFailure,
     TicketsActions.createTicketFailure,
     (state, { error }) => ({
       ...state,

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Ticket, User } from '@acme/shared-models';
+import { catchError, forkJoin, map, of } from 'rxjs';
 
 @Injectable()
 export class ApiService {
@@ -24,6 +25,31 @@ export class ApiService {
 
   newTicket(payload: { description: string }) {
     return this.httpClient.post<Ticket>('/api/tickets', payload);
+  }
+
+  updateTicket(ticketId: number, assigneeId: number, completed: boolean) {
+    return forkJoin([
+      this.assign(ticketId, assigneeId).pipe(
+        map(() => assigneeId),
+        catchError((err)=> {
+          console.error(err)
+          return of(null);
+        })
+      ),
+      this.complete(ticketId, completed).pipe(
+        map(() => completed),
+        catchError((err)=> {
+          console.error(err)
+          return of(null);
+        })
+      ),
+    ]).pipe(
+      map(([assigneeId, completed]) => ({
+        ticketId,
+        ...(assigneeId ? {assigneeId} : {}),
+        ...(completed ? {completed} : {})
+      } as { ticketId: number, assigneeId: number, completed: boolean}))
+    )
   }
 
   assign(ticketId: number, userId: number) {

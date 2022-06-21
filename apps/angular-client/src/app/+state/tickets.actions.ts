@@ -9,7 +9,7 @@ export const ticketsPageInit = createAction('[Tickets Page] Init');
 export const submitTicket = createAction('[Tickets Page] Submit Ticket', props<Pick<TicketsEntity, 'description'>>());
 export const updateTicketsFilter = createAction('[Tickets Page] Update Tickets Filter', props<TicketsFilter>());
 export const ticketDetailsPageInit = createAction('[Ticket Details Page] Init', props<{ticketId: number}>() );
-export const submitTicketUpdate = createAction('[Ticket Details Page] Submit Ticket Update');
+export const submitTicketUpdate = createAction('[Ticket Details Page] Submit Ticket Update',  props<{ticketId: number, assigneeId: number, completed: boolean}>());
 
 /**
  * API Actions
@@ -34,22 +34,13 @@ export const createTicketFailure = createAction(
   props<{ error: any }>()
 );
 
-export const completeTicketSuccess = createAction(
-  '[Tickets/API] Complete Ticket Success',
-  props<{ ticketId: number, completed: boolean }>()
+export const updateTicketSuccess = createAction(
+  '[Tickets/API] Update Ticket Success',
+  props<{ ticketId: number, assigneeId: number, completed: boolean }>()
 );
 
-export const completeTicketFailure = createAction(
-  '[Tickets/API] Complete Ticket Failure',
+export const updateTicketFailure = createAction(
+  '[Tickets/API] Update Ticket Failure',
   props<{ error: any }>()
 );
 
-export const assignTicketSuccess = createAction(
-  '[Tickets/API] Complete Ticket Success',
-  props<{ticketId: number, userId: number}>()
-);
-
-export const assignTicketFailure = createAction(
-  '[Tickets/API] Complete Ticket Failure',
-  props<{ error: any }>()
-);

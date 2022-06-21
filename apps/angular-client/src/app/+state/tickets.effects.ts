@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
-import { filter, map, tap, withLatestFrom } from 'rxjs';
+import { filter, map, withLatestFrom } from 'rxjs';
 import { ApiService } from '../api.service';
 
 import * as TicketsActions from './tickets.actions';
@@ -32,7 +32,7 @@ export class TicketsEffects {
     )
   );
 
-  submitTicket$ = createEffect(() =>
+  createTicket$ = createEffect(() =>
     this.actions$.pipe(
       ofType(TicketsActions.submitTicket),
       fetch({
@@ -45,6 +45,24 @@ export class TicketsEffects {
         onError: (action, error) => {
           console.error('Error', error);
           return TicketsActions.createTicketFailure({ error });
+        },
+      })
+    )
+  );
+
+  updateTicket$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(TicketsActions.submitTicketUpdate),
+      fetch({
+        run: ({ticketId, assigneeId, completed}) => {
+          // Your custom service 'load' logic goes here. For now just return a success action...
+          return this.api.updateTicket(ticketId, assigneeId, completed).pipe(
+            map((changes) => TicketsActions.updateTicketSuccess(changes))
+          )
+        },
+        onError: (action, error) => {
+          console.error('Error', error);
+          return TicketsActions.updateTicketFailure({ error });
         },
       })
     )

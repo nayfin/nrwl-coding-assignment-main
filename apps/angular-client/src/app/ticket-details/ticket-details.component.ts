@@ -5,8 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
 import { catchError, combineLatest, distinctUntilChanged, map, Observable, of, pipe, switchMap } from 'rxjs';
-import { ticketDetailsPageInit } from '../+state/tickets.actions';
+import { submitTicketUpdate, ticketDetailsPageInit } from '../+state/tickets.actions';
 import { getSelected as getSelectedTicket } from '../+state/tickets.selectors';
+import { getAllUsers } from '../+state/users.selectors';
 import { ApiService } from '../api.service';
 
 @Component({
@@ -33,7 +34,7 @@ export class TicketDetailsComponent {
             map(completed => completed)
           )
         },
-        options: this.api.users().pipe(
+        options: this.store.select(getAllUsers).pipe(
           map((users) => {
             const userOptions = users.map(user => {
               return {label: user.name,
@@ -93,17 +94,9 @@ export class TicketDetailsComponent {
   assignUser(form: FormGroup, ticketId: number) {
     if (form.valid) {
       const {assigneeId, completed} = form.getRawValue();
-      combineLatest([
-        this.api.assign(ticketId, assigneeId),
-        this.api.complete(ticketId, completed || false),
-      ]).pipe(
-        catchError((err) => {
-          console.error(err);
-          return of(err)
-        })
-      ).subscribe(() => {
-        this.router.navigate([''])
-      })
+
+      this.store.dispatch(submitTicketUpdate({assigneeId, ticketId, completed}));
+      this.router.navigate(['tickets'])
     }
   }
 }

@@ -33,8 +33,10 @@ export class TicketDetailsComponent implements OnInit {
         options: this.api.users().pipe(
           map((users) => {
             const userOptions = users.map(user => {
-              return {label: user.name,
-              value: user.id}
+              return {
+                label: user.name,
+                value: user.id
+              }
             })
             return [
               {

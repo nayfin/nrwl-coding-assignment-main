@@ -3,9 +3,9 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
+import { StatusOptions } from '../+state/tickets.models';
 import { ApiService } from '../api.service';
 
-type StatusOptions = 'complete' | 'incomplete'
 type TicketUI = Ticket & { assigneeName: string | null};
 
 @Component({

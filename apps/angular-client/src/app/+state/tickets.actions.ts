@@ -8,7 +8,7 @@ import { TicketsEntity, TicketsFilter } from './tickets.models';
 export const ticketsPageInit = createAction('[Tickets Page] Init');
 export const submitTicket = createAction('[Tickets Page] Submit Ticket', props<Pick<TicketsEntity, 'description'>>());
 export const updateTicketsFilter = createAction('[Tickets Page] Update Tickets Filter', props<TicketsFilter>());
-export const ticketDetailsPageInit = createAction('[Ticket Details Page] Init');
+export const ticketDetailsPageInit = createAction('[Ticket Details Page] Init', props<{ticketId: number}>() );
 export const submitTicketUpdate = createAction('[Ticket Details Page] Submit Ticket Update');
 
 /**

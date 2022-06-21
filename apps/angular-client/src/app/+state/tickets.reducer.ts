@@ -1,3 +1,4 @@
+import { state } from '@angular/animations';
 import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
 import { createReducer, on, Action } from '@ngrx/store';
 
@@ -39,6 +40,7 @@ const ticketsReducer = createReducer(
     loaded: false,
     error: null,
   })),
+  on(TicketsActions.ticketDetailsPageInit, (state, {ticketId}) => ({...state, selectedId: ticketId })),
   on(TicketsActions.loadTicketsSuccess, (state, { tickets }) =>
     ticketsAdapter.setAll(tickets, { ...state, loaded: true })
   ),

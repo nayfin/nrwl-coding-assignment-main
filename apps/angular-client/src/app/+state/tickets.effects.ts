@@ -1,19 +1,25 @@
 import { Injectable } from '@angular/core';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
+import { Store } from '@ngrx/store';
 import { fetch } from '@nrwl/angular';
-import { map, tap } from 'rxjs';
+import { filter, map, tap, withLatestFrom } from 'rxjs';
 import { ApiService } from '../api.service';
 
 import * as TicketsActions from './tickets.actions';
 import * as TicketsFeature from './tickets.reducer';
+import { getTicketsLoaded } from './tickets.selectors';
 
 @Injectable()
 export class TicketsEffects {
   init$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(TicketsActions.ticketsPageInit),
+      ofType(TicketsActions.ticketsPageInit, TicketsActions.ticketDetailsPageInit),
+      withLatestFrom(this.store.select(getTicketsLoaded)),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      filter(([_action, isLoaded]) => !isLoaded),
+      map(([action]) => action),
       fetch({
-        run: (action) => {
+        run: () => {
           return this.api.tickets().pipe(
             map(tickets => TicketsActions.loadTicketsSuccess({ tickets}))
           )
@@ -46,6 +52,7 @@ export class TicketsEffects {
 
   constructor(
     private readonly actions$: Actions,
+    private readonly store: Store,
     private api: ApiService
   ) {}
 }

@@ -2,8 +2,11 @@ import { Ticket } from '@acme/shared-models';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
 import { catchError, combineLatest, distinctUntilChanged, map, Observable, of, pipe, switchMap } from 'rxjs';
+import { ticketDetailsPageInit } from '../+state/tickets.actions';
+import { getSelected as getSelectedTicket } from '../+state/tickets.selectors';
 import { ApiService } from '../api.service';
 
 @Component({
@@ -11,9 +14,9 @@ import { ApiService } from '../api.service';
   templateUrl: './ticket-details.component.html',
   styleUrls: ['./ticket-details.component.scss'],
 })
-export class TicketDetailsComponent implements OnInit {
+export class TicketDetailsComponent {
 
-  ticket$: Observable<Ticket> | undefined;
+  ticket$ = this.store.select(getSelectedTicket);
 
   assignUserConfig: FormConfig = {
     fields: [
@@ -75,19 +78,16 @@ export class TicketDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.ticket$ = this.route.paramMap.pipe(
-      switchMap((params) => {
-        const stringId = params?.get('id') || '';
-        // should route back home if there is an issue with id param
-        if (!stringId) this.router.navigate(['']);
-        const ticketId = parseFloat(stringId);
-        return this.api.ticket(ticketId);
-      })
-    )
+    private router: Router,
+    private store: Store,
+  ) {
+    this.route.paramMap.subscribe(params => {
+      const stringId = params?.get('id') || '';
+      // should route back home if there is an issue with id param
+      if (!stringId) this.router.navigate(['']);
+      const ticketId = parseFloat(stringId);
+      this.store.dispatch(ticketDetailsPageInit({ticketId}))
+    });
   }
 
   assignUser(form: FormGroup, ticketId: number) {

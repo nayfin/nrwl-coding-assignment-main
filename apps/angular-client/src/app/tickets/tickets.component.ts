@@ -1,9 +1,12 @@
 import { Ticket, User } from '@acme/shared-models';
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { ControlType, FormConfig } from '@tft/crispr-forms';
 import { BehaviorSubject, combineLatest, map, Observable } from 'rxjs';
-import { StatusOptions } from '../+state/tickets.models';
+import { ticketsPageInit } from '../+state/tickets.actions';
+import { StatusOptions, TicketsFilter } from '../+state/tickets.models';
+import { getAllTickets } from '../+state/tickets.selectors';
 import { ApiService } from '../api.service';
 
 type TicketUI = Ticket & { assigneeName: string | null};
@@ -20,7 +23,7 @@ export class TicketsComponent {
   users$ = this.api.users();
 
   tickets$: Observable<TicketUI[]> = combineLatest([
-    this.api.tickets(),
+    this.store.select(getAllTickets),
     this.newTicketsSubject,
     this.users$
   ]).pipe(
@@ -34,19 +37,22 @@ export class TicketsComponent {
     }))
   );
 
-  filterSubject = new BehaviorSubject<StatusOptions[]>([]);
+  filterSubject = new BehaviorSubject<TicketsFilter>({status: [], fullText: ''});
 
   filteredTickets$: Observable<TicketUI[]> = combineLatest([
     this.tickets$,
     this.filterSubject,
   ]).pipe(
     map(([unfilteredTickets, filter]) => {
+      const { status, fullText} = filter;
       // return all tickets if not filtering
-      if (filter?.length === 0) return unfilteredTickets;
+      if (!status?.length && fullText === '') return unfilteredTickets;
       // else filter them by status
       return unfilteredTickets.filter((ticket) => {
-        return (filter.includes('complete') && ticket.completed)
-        || (filter.includes('incomplete') && !ticket.completed)
+        const isPassingFullText = ticket.description.includes(filter.fullText)
+        const isPassingStatus = !status?.length ||(status.includes('complete') && ticket.completed)
+          || (status.includes('incomplete') && !ticket.completed);
+        return isPassingStatus && isPassingFullText;
       })
     })
   )
@@ -54,8 +60,14 @@ export class TicketsComponent {
   filterConfig: FormConfig = {
     fields: [
       {
+        controlType: ControlType.INPUT,
+        controlName: 'fullText',
+        inputType: 'text',
+        label: 'Search by name',
+      },
+      {
         controlType: ControlType.SELECT,
-        controlName: 'statusFilter',
+        controlName: 'status',
         label: 'Filter By Status',
         multiple: true,
         options: [
@@ -94,11 +106,14 @@ export class TicketsComponent {
   submitting = false;
 
   constructor(
-    private api: ApiService
-  ) {}
+    private api: ApiService,
+    private store: Store
+  ) {
+    this.store.dispatch(ticketsPageInit())
+  }
 
-  updateFilter(event: {statusFilter: StatusOptions[]}) {
-    this.filterSubject.next(event.statusFilter || [])
+  updateFilter(event: TicketsFilter) {
+    this.filterSubject.next({fullText: event.fullText || '', status: event.status || []})
   }
 
   createNewTicket(ticketForm: FormGroup) {

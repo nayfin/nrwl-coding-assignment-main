@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Ticket, User } from '@acme/shared-models';
+// import { throwError } from 'rxjs';
 
 @Injectable()
 export class ApiService {
   constructor(private httpClient: HttpClient) {}
 
   tickets() {
+    // return throwError(new Error('tickets not loaded'))
     return this.httpClient.get<Ticket[]>('/api/tickets');
   }
 
